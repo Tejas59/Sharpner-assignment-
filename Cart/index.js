@@ -67,7 +67,7 @@ async function getProducts() {
     products.forEach((product, index) => {
       const listItem = document.createElement('li');
       listItem.classList.add('list-group-item');
-      listItem.textContent = `| Selling: ${product.Selling} | Description: ${product.product} | Category: ${product.category} |`;
+      listItem.textContent = `| Selling Price: ${product.Selling} | Product: ${product.product} | Category: ${product.category} |`;
       listItem.style.fontWeight = 'bold';
       listItem.style.fontSize = '16px';
       listItem.style.padding = '10px';
@@ -127,7 +127,7 @@ function updateproductList(products) {
   products.forEach((product, index) => {
     const listItem = document.createElement('li');
     listItem.classList.add('list-group-item');
-    listItem.textContent = `| Selling: ${product.Selling} |Description: ${product.product} | Category: ${product.category} |`;
+    listItem.textContent = `| Selling Price: ${product.Selling} |Product: ${product.product} | Category: ${product.category} |`;
     listItem.style.fontWeight = 'bold';
     listItem.style.fontSize = '16px';
     listItem.style.padding = '10px';
