@@ -1,155 +1,96 @@
-function handleFormSubmit(event) {
+document.getElementById("product-form").addEventListener("submit", async function(event) {
   event.preventDefault();
+  
+  const sellingPrice = document.getElementById("Selling").value;
+  const product = document.getElementById("product").value;
+  const category = document.getElementById("category").value;
 
- 
-  const SellingInput = document.getElementById('Selling');
-  const productInput = document.getElementById('product');
-  const categoryInput = document.getElementById('category');
 
-  const Selling = Number(SellingInput.value);
-  const product = productInput.value.trim();
-  const category = categoryInput.value;
+  const productItem = document.createElement("div");
+  productItem.classList.add("product-item", "mb-3", "border", "p-2");
+  productItem.innerHTML = `
+    <strong>Product:</strong> ${product} - 
+    <strong>Price:</strong> ₹${sellingPrice}
+    <button type="button" class="btn btn-danger btn-sm float-end delete-btn">Delete</button>
+  `;
 
-  if (!Selling || typeof Selling !== 'number') {
-    alert('Selling must be in number format only');
-    return;
+  
+  let categoryContainer = document.getElementById(`${category}-container`);
+  if (!categoryContainer) {
+    
+    categoryContainer = document.createElement("div");
+    categoryContainer.id = `${category}-container`;
+    categoryContainer.innerHTML = `<h4>${category}</h4>`;
+    document.getElementById("product-list").appendChild(categoryContainer);
   }
+  categoryContainer.appendChild(productItem);
 
-  if (!product) {
-    alert('product missing');
-    return;
+ 
+  document.getElementById("product-form").reset();
+
+  try {
+    const productDetails = {
+      Selling: Number(sellingPrice),
+      product: product.trim(),
+      category: category
+    };
+    const response = await axios.post("https://crudcrud.com/api/fc8107a57ec9476db0c8e45dffae591a/task", productDetails);
+    console.log(response);
+  } catch (error) {
+    console.error("Error adding product:", error);
+    alert("An error occurred while adding the product.");
   }
+});
 
-  if (!category) {
-    alert('Please select category');
-    return;
+
+document.getElementById("product-list").addEventListener("click", async function(event) {
+  if (event.target.classList.contains("delete-btn")) {
+    const productItem = event.target.parentNode;
+    const categoryContainer = productItem.parentNode;
+    categoryContainer.removeChild(productItem);
+
+    const productId = productItem.getAttribute("data-product-id");
+    try {
+      const deleteResponse = await axios.delete(`https://crudcrud.com/api/fc8107a57ec9476db0c8e45dffae591a/task/${productId}`);
+      console.log(deleteResponse);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("An error occurred while deleting the product.");
+    }
   }
+});
 
- 
-  const productDetails = {
-    Selling:Selling,
-    product:product,
-    category:category
-  };
-
- 
-    axios.post("https://crudcrud.com/api/f958ef52f986446baf1fc8dbd81f64d3/task", productDetails)
-  
-   .then((res)=>{
-    updateproductList(res.data)
-    console.log(res)
-   })
-  .catch((err)=>{
-    console.log(err)
-  });
-  
-
- 
-  SellingInput.value = '';
-  productInput.value = '';
-  categoryInput.value = '';
-
-  
-  updateproductList(existingproducts);
-
- 
-  
-}
+document.addEventListener("DOMContentLoaded", getProducts);
 
 async function getProducts() {
   try {
-    const response = await axios.get("https://crudcrud.com/api/f958ef52f986446baf1fc8dbd81f64d3/task");
+    const response = await axios.get("https://crudcrud.com/api/fc8107a57ec9476db0c8e45dffae591a/task");
     const products = response.data;
 
-    const productList = document.getElementById('product-list');
-    productList.innerHTML = '';
+    const productList = document.getElementById("product-list");
+    productList.innerHTML = "";
 
     products.forEach((product) => {
-      const listItem = document.createElement('li');
-      listItem.classList.add('list-group-item');
-      listItem.textContent = `| Selling Price: ${product.Selling} | Product: ${product.product} | Category: ${product.category} |`;
-      listItem.style.fontWeight = 'bold';
-      listItem.style.fontSize = '16px';
-      listItem.style.padding = '10px';
+      const listItem = document.createElement("div");
+      listItem.classList.add("product-item", "mb-3", "border", "p-2");
+      listItem.innerHTML = `
+        <strong>Product:</strong> ${product.product} - 
+        <strong>Price:</strong> ₹${product.Selling}
+        <button type="button" class="btn btn-danger btn-sm float-end delete-btn">Delete</button>
+      `;
+      listItem.setAttribute("data-product-id", product._id);
 
-      const deleteButton = document.createElement('button');
-      deleteButton.classList.add('btn', 'rounded-pill', 'shadow-sm', 'fw-bold', 'text-uppercase', 'border', 'border-primary');
-      deleteButton.textContent = 'Delete';
-      deleteButton.addEventListener('click', async () => {
-        if (confirm('Are you sure you want to delete this product?')) {
-          try {
-            const deleteResponse = await axios.delete(
-              `https://crudcrud.com/api/f958ef52f986446baf1fc8dbd81f64d3/task/${product._id}`
-            );
-            listItem.remove();
-            getProducts(); 
-          } catch (error) {
-            console.error('Error deleting product:', error);
-            alert('An error occurred. Please try again later.');
-          }
-        }
-      });
-
-      listItem.appendChild(deleteButton);
-      productList.appendChild(listItem);
+      let categoryContainer = document.getElementById(`${product.category}-container`);
+      if (!categoryContainer) {
+        categoryContainer = document.createElement("div");
+        categoryContainer.id = `${product.category}-container`;
+        categoryContainer.innerHTML = `<h4>${product.category}</h4>`;
+        productList.appendChild(categoryContainer);
+      }
+      categoryContainer.appendChild(listItem);
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
-    alert('An error occurred while fetching products.');
+    console.error("Error fetching products:", error);
+    alert("An error occurred while fetching products.");
   }
 }
-
-
-getProducts();
-
-function removeproduct(index) {
- 
-  const existingproducts = JSON.parse(localStorage.getItem('products') || '[]');
-
- 
-  if (confirm('Do you want to delete this product?')) {
-    existingproducts.splice(index, 1);
-    localStorage.setItem('products', JSON.stringify(existingproducts));
-    updateproductList(existingproducts);
-  }
-}
-
-
-
-
-
-
-function updateproductList(products) {
-  const productList = document.getElementById('product-list');
-  productList.innerHTML = '';
-
- 
-  products.forEach((product, index) => {
-    const listItem = document.createElement('li');
-    listItem.classList.add('list-group-item');
-    listItem.textContent = `| Selling Price: ${product.Selling} |Product: ${product.product} | Category: ${product.category} |`;
-    listItem.style.fontWeight = 'bold';
-    listItem.style.fontSize = '16px';
-    listItem.style.padding = '10px';
-
-
-
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('btn', 'rounded-pill', 'shadow-sm', 'fw-bold', 'text-uppercase', 'border', 'border-primary');
-    deleteButton.textContent = 'Delete';
-    deleteButton.addEventListener('click', () => removeproduct(index));
-
-    listItem.appendChild(deleteButton);
-    productList.appendChild(listItem);
-  });
-}
-
-
-const form = document.getElementById('product-form');
-form.addEventListener('submit', handleFormSubmit);
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  const existingproducts = JSON.parse(localStorage.getItem('products') || '[]');
-  updateproductList(existingproducts);
-});
