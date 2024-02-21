@@ -33,7 +33,7 @@ function handleFormSubmit(event) {
   };
 
  
-    axios.post("https://crudcrud.com/api/c140db2df8444142bfaf2349a8b077df/task", productDetails)
+    axios.post("https://crudcrud.com/api/f958ef52f986446baf1fc8dbd81f64d3/task", productDetails)
   
    .then((res)=>{
     updateproductList(res.data)
@@ -58,13 +58,13 @@ function handleFormSubmit(event) {
 
 async function getProducts() {
   try {
-    const response = await axios.get("https://crudcrud.com/api/c140db2df8444142bfaf2349a8b077df/task");
+    const response = await axios.get("https://crudcrud.com/api/f958ef52f986446baf1fc8dbd81f64d3/task");
     const products = response.data;
 
     const productList = document.getElementById('product-list');
     productList.innerHTML = '';
 
-    products.forEach((product, index) => {
+    products.forEach((product) => {
       const listItem = document.createElement('li');
       listItem.classList.add('list-group-item');
       listItem.textContent = `| Selling Price: ${product.Selling} | Product: ${product.product} | Category: ${product.category} |`;
@@ -79,7 +79,7 @@ async function getProducts() {
         if (confirm('Are you sure you want to delete this product?')) {
           try {
             const deleteResponse = await axios.delete(
-              `https://crudcrud.com/api/c140db2df8444142bfaf2349a8b077df/task/${product._id}`
+              `https://crudcrud.com/api/f958ef52f986446baf1fc8dbd81f64d3/task/${product._id}`
             );
             listItem.remove();
             getProducts(); 
@@ -132,17 +132,13 @@ function updateproductList(products) {
     listItem.style.fontSize = '16px';
     listItem.style.padding = '10px';
 
-    const editButton = document.createElement('button');
-    editButton.classList.add('btn', 'rounded-pill', 'shadow-sm', 'fw-bold', 'text-uppercase', 'border', 'border-primary');
-    editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => editproduct(index));
+
 
     const deleteButton = document.createElement('button');
     deleteButton.classList.add('btn', 'rounded-pill', 'shadow-sm', 'fw-bold', 'text-uppercase', 'border', 'border-primary');
     deleteButton.textContent = 'Delete';
     deleteButton.addEventListener('click', () => removeproduct(index));
 
-    listItem.appendChild(editButton);
     listItem.appendChild(deleteButton);
     productList.appendChild(listItem);
   });
