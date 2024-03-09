@@ -19,8 +19,13 @@
   </form>
   <ul>
     <% expenses.forEach(expense => { %>
-      <li><%= expense.amount %> - <%= expense.description %>
-        <form action="/<%= expense.id %>/delete" method="POST">
+      <li>
+        <span><%= expense.amount %> - <%= expense.description %></span>
+        <form action="/<%= expense.id %>/edit" method="POST" style="display: inline;">
+          <input type="hidden" name="_method" value="PUT">
+          <button type="submit">Edit</button>
+        </form>
+        <form action="/<%= expense.id %>/delete" method="POST" style="display: inline;">
           <button type="submit">Delete</button>
         </form>
       </li>

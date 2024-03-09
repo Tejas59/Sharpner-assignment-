@@ -5,7 +5,7 @@ const sequelize = new Sequelize({
   host: 'localhost',          
   username: 'root',           
   password: 'Tejas@555',      
-  database: 'node'            
+  database: 'practice'            
 });
 
 module.exports = sequelize;
