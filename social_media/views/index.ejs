@@ -51,9 +51,72 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS and jQuery (Optional) -->
+  
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const commentForms = document.querySelectorAll('.comment-form');
+      
+      commentForms.forEach(form => {
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault(); // Prevent the default form submission behavior
+  
+          const postId = form.dataset.postId;
+          const commentContent = form.querySelector('input[name="comment"]').value;
+  
+          try {
+            const response = await fetch('/create-comment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ postId, content: commentContent })
+            });
+  
+            if (response.ok) {
+              // Comment added successfully, now fetch and update comments for the current post
+              console.log('Comment added successfully');
+              form.querySelector('input[name="comment"]').value = ''; // Clear the comment input field
+              fetchComments(postId); // Fetch and update comments for the current post
+            } else {
+              console.error('Error adding comment:', response.statusText);
+              // Handle error (e.g., display an error message)
+            }
+          } catch (error) {
+            console.error('Error adding comment:', error.message);
+            // Handle error (e.g., display an error message)
+          }
+        });
+      });
+    });
+  
+    async function fetchComments(postId) {
+      try {
+        const response = await fetch(`/comments/${postId}`);
+        if (response.ok) {
+          const comments = await response.json();
+          updateCommentsUI(postId, comments); // Update the UI with the fetched comments
+        } else {
+          console.error('Error fetching comments:', response.statusText);
+          // Handle error (e.g., display an error message)
+        }
+      } catch (error) {
+        console.error('Error fetching comments:', error.message);
+        // Handle error (e.g., display an error message)
+      }
+    }
+  
+    function updateCommentsUI(postId, comments) {
+      const commentList = document.querySelector(`.comments[data-post-id="${postId}"]`);
+      commentList.innerHTML = ''; // Clear existing comments
+  
+      comments.forEach(comment => {
+        const commentElement = document.createElement('li');
+        commentElement.textContent = comment.content;
+        commentList.appendChild(commentElement);
+      });
+    }
+  </script>
+  
 </body>
 </html>
