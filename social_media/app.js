@@ -7,11 +7,11 @@ const commentRoutes = require('./routes/commentRoutes');
 const app = express();
 const port = 4000;
 
-// Body parser for form data
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Set EJS as the templating engine and adjust view directory
+
 app.set('view engine', 'ejs');
 app.set('views', './views');
 

@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Social App</title>
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -25,10 +24,10 @@
     <h2 class="mt-5">Posts</h2>
     <div class="posts">
       <% for (const post of posts) { %>
-        <div class="post card my-4">
-          <div class="card-body">
+        <div class="post card my-4 w-50 h-50 mx-auto">
+          <div class="card-body ">
             <h3 class="card-title">Anonymous</h3>
-            <img src="<%= post.imageUrl %>" class="card-img-top" alt="Post image">
+            <img src="<%= post.imageUrl %>" class="card-img-top " alt="Post image">
             <p class="card-text mt-3"><%= post.description %></p>
             <h4 class="card-title">Comments:</h4>
             <ul class="comments" data-post-id="<%= post.id %>">
@@ -51,7 +50,6 @@
     </div>
   </div>
 
-  
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -61,7 +59,7 @@
       
       commentForms.forEach(form => {
         form.addEventListener('submit', async (event) => {
-          event.preventDefault(); // Prevent the default form submission behavior
+          event.preventDefault(); 
   
           const postId = form.dataset.postId;
           const commentContent = form.querySelector('input[name="comment"]').value;
@@ -74,17 +72,15 @@
             });
   
             if (response.ok) {
-              // Comment added successfully, now fetch and update comments for the current post
               console.log('Comment added successfully');
-              form.querySelector('input[name="comment"]').value = ''; // Clear the comment input field
-              fetchComments(postId); // Fetch and update comments for the current post
+              form.querySelector('input[name="comment"]').value = ''; 
+              fetchComments(postId); 
             } else {
               console.error('Error adding comment:', response.statusText);
-              // Handle error (e.g., display an error message)
+              
             }
           } catch (error) {
             console.error('Error adding comment:', error.message);
-            // Handle error (e.g., display an error message)
           }
         });
       });
@@ -95,20 +91,20 @@
         const response = await fetch(`/comments/${postId}`);
         if (response.ok) {
           const comments = await response.json();
-          updateCommentsUI(postId, comments); // Update the UI with the fetched comments
+          updateCommentsUI(postId, comments); 
         } else {
           console.error('Error fetching comments:', response.statusText);
-          // Handle error (e.g., display an error message)
+          
         }
       } catch (error) {
         console.error('Error fetching comments:', error.message);
-        // Handle error (e.g., display an error message)
+        
       }
     }
   
     function updateCommentsUI(postId, comments) {
       const commentList = document.querySelector(`.comments[data-post-id="${postId}"]`);
-      commentList.innerHTML = ''; // Clear existing comments
+      commentList.innerHTML = ''; 
   
       comments.forEach(comment => {
         const commentElement = document.createElement('li');
