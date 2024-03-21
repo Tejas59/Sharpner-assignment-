@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const signupRoutes = require('./routes/signupRoutes');
+const signinRoutes = require('./routes/signinRoutes');
 const sequelize = require('./config/database');
-
 
 const app = express();
 
@@ -12,7 +12,18 @@ app.set('views', 'views');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/', signupRoutes);
+// Route to render login form
+app.get('/', (req, res) => {
+  res.render('signin', { error: null }); // Pass null initially
+});
+
+// Route to render signup form
+app.get('/signup', (req, res) => {
+  res.render('signup'); // Assuming signup.ejs contains the signup form
+});
+
+app.use('/signup', signupRoutes);
+app.use('/signin', signinRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

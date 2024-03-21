@@ -1,3 +1,4 @@
+// signupController.js
 const User = require('../model/signupModel.js');
 
 exports.createUser = async (req, res, next) => {
@@ -7,12 +8,15 @@ exports.createUser = async (req, res, next) => {
     res.redirect('/');
   } catch (err) {
     if (err.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).send('Email is already registered.');
+      // Email is already registered, render signup form with error message
+      res.render('index', { error: 'Email is already registered.' });
+    } else {
+      next(err);
     }
-    next(err);
   }
 };
 
 exports.renderSignupForm = (req, res) => {
-  res.render('index');
+  // Render signup form without error initially
+  res.render('index', { error: null });
 };

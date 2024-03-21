@@ -1,12 +1,14 @@
+// routes.js
+
 const express = require('express');
 const router = express.Router();
-const signupRoutes = require('../controller/signupController.js');
-
-router.get('/', signupRoutes.renderSignupForm);
-
-router.post('/signup',signupRoutes.createUser);
+const signupController = require('../controller/signupController');
 
 
+// Sign-up route
+router.post('/signup', signupController.createUser);
+
+// Sign-in route
 
 
 module.exports = router;
